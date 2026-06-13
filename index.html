@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Friend by Wicky</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Quicksand:wght@400;500;600;700&display=swap');
+
+    :root {
+      --primary: #d946ef;
+      --primary-hover: #c084fc;
+      --secondary: #eab308;
+      --accent: #f43f5e;
+      --bg-overlay: rgba(15, 12, 30, 0.7);
+      --glass-bg: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --text-primary: #ffffff;
+      --text-secondary: #f3e8ff;
+      --text-muted: #d8b4fe;
+      --shadow-glow: 0 0 25px rgba(217, 70, 239, 0.4);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Quicksand', system-ui, sans-serif;
+      --font-cursive: 'Dancing Script', cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background-color: #0b071e;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background image styling with low opacity Jaipur theme */
+    .jaipur-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      opacity: 0.22;
+      filter: grayscale(10%) contrast(110%);
+      z-index: -2;
+      background-image: url('https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?q=80&w=1200');
+      background-position: center;
+      background-size: cover;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, rgba(11, 7, 30, 0.9) 0%, rgba(29, 11, 48, 0.8) 50%, rgba(77, 18, 59, 0.7) 100%);
+      z-index: -1;
+    }
+
+    .app-container {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 2rem 1rem;
+      z-index: 1;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-serif);
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .text-gradient {
+      background: linear-gradient(to right, #f472b6, #db2777, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 550px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      text-align: center;
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes slideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .btn {
+      padding: 0.85rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: var(--font-sans);
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      color: white;
+      box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4);
+    }
+
+    .btn-yes:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6), var(--shadow-glow);
+    }
+
+    .btn-no {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Sound indicator */
+    .sound-indicator {
+      display: flex;
+      gap: 3px;
+      align-items: flex-end;
+      height: 20px;
+      width: 30px;
+    }
+
+    .sound-bar {
+      width: 3px;
+      height: 100%;
+      background-color: var(--secondary);
+      border-radius: 3px;
+      animation: bounceBar 0.8s ease-in-out infinite alternate;
+    }
+
+    .sound-bar:nth-child(2) { animation-delay: 0.15s; }
+    .sound-bar:nth-child(3) { animation-delay: 0.3s; }
+    .sound-bar:nth-child(4) { animation-delay: 0.45s; }
+
+    @keyframes bounceBar {
+      0% { height: 4px; }
+      100% { height: 20px; }
+    }
+
+    /* Promise wall */
+    .promise-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .promise-tag {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      transition: all 0.3s ease;
+      font-family: var(--font-sans);
+    }
+
+    .promise-tag:hover {
+      background: rgba(217, 70, 239, 0.2);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(217, 70, 239, 0.2);
+    }
+
+    .promise-tag.active {
+      background: linear-gradient(135deg, rgba(217, 70, 239, 0.4), rgba(244, 63, 94, 0.4));
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* Typewriter paper */
+    .letter-paper {
+      background: #fdf6e2;
+      color: #2c2518;
+      padding: 2.5rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 40px rgba(0, 0, 0, 0.05);
+      font-family: var(--font-cursive);
+      font-size: 1.5rem;
+      line-height: 1.8;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .letter-paper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      background-size: 100% 2rem;
+      pointer-events: none;
+    }
+
+    /* Floating particles */
+    .floating-particle {
+      position: fixed;
+      font-size: 1.5rem;
+      pointer-events: none;
+      z-index: 100;
+      animation: floatUpwards 3s linear forwards;
+    }
+
+    @keyframes floatUpwards {
+      0% {
+        transform: translateY(100vh) scale(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.2) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(217, 70, 239, 0.6)); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-5deg) scale(1.05); }
+      75% { transform: rotate(5deg) scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="jaipur-bg"></div>
+  <div class="bg-overlay"></div>
+
+  <!-- Ambient Sound Player -->
+  <div id="music-player-btn" style="position: fixed; bottom: 20px; right: 20px; zIndex: 1000; display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); cursor: pointer; transition: all 0.3s ease; z-index: 1000;">
+    <span id="music-text" style="font-size: 0.9rem; font-weight: 600; color: #fff; user-select: none;">Tap for Soft Music 🎵</span>
+    <div id="sound-indicator-container">
+      <div style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">🔇</div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <header style="margin-bottom: 2rem; z-index: 10; text-align: center;">
+      <h1 class="text-gradient" style="font-size: 2.8rem; font-weight: 800; letter-spacing: 1.5px; font-family: var(--font-serif); margin: 0;">Best Friend By Wicky</h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 0.2rem; margin-bottom: 0;">An Unbreakable Bond</p>
+    </header>
+
+    <div style="z-index: 10; width: 100%; display: flex; justify-content: center;" id="step-container">
+      <!-- Step 1 Card: Apology Card -->
+      <div id="step-1" class="glass-card" style="padding: 3rem 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1.5rem; animation: pulse 2s infinite;">🥺</div>
+        <h2 style="font-size: 2rem; margin-bottom: 1rem; font-weight: 700;">Mujhe maaf kar diya kya?</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.1rem;">I know I was wrong, and I'm really sorry. Please click "Yes" to forgive me.</p>
+        
+        <div id="btn-container" style="display: flex; justify-content: center; align-items: center; gap: 2rem; min-height: 80px; position: relative;">
+          <button class="btn btn-yes" onclick="goToStep(2)" style="z-index: 10;">Yes, Maaf Kiya! ❤️</button>
+          <button id="no-btn" class="btn btn-no" onmouseenter="moveNoBtn()" ontouchstart="handleTouchNo(event)" onfocus="moveNoBtn()" onclick="handleNoClick(event)">Nahi 😢</button>
+        </div>
+      </div>
+    </div>
+
+    <footer style="margin-top: 3rem; z-index: 10; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
+      Made with ❤️ by Wicky | Jaipur Diaries 🕌
+    </footer>
+  </div>
+
+  <script>
+    // ----------------------------------------------------
+    // Multistep State Management
+    // ----------------------------------------------------
+    let currentStep = 1;
+    let noButtons = [{ id: 1 }];
+    const noTexts = [
+      "Nahi 😢", "Ek baar aur soch lo 🤔", "Are click nahi hoga! 😜", "Galat button dabaya ❌",
+      "Nahi bol sakte 🤐", "Try again! 😂", "Wicky is sorry, please! 🙏", "Haan wala button daba do! 👉",
+      "Koshish bekaar hai! 😎", "No way! 🙅‍♀️", "Bilkul nahi! 😤", "Soch lo fir se! 👀"
+    ];
+
+    const shayaris = [
+      {
+        hindi: "Dosti koi khoj nahi hoti,\nYe har kisi se roz nahi hoti,\nApni zindagi me hume bojh mat samajhna,\nKyunki dosti hamari kabhi aam nahi hoti. 🌟",
+        trans: "Friendship is not something to search, it doesn't happen with everyone daily. Never consider my presence a burden, because our bond is truly special."
+      },
+      {
+        hindi: "Galti hui hai toh saza bhi de do,\nPar is tarah se muh na phero,\nMaan jao ab aur thoda muskura do,\nApne best friend ko dil se dua de do. 🥺",
+        trans: "If I made a mistake, punish me, but don't turn away like this. Please smile a little now, and bless your best friend from your heart."
+      },
+      {
+        hindi: "Dil se dil badi mushkil se milte hain,\nTufan me saahil badi mushkil se milte hain,\nMil jaate hain log hazaron duniya me,\nPar tum jaise dost badi mushkil se milte hain. ❤️",
+        trans: "Hearts connect with great difficulty, shores are hard to find in storms. Thousands of people can be met, but a friend like you is found once in a lifetime."
+      }
+    ];
+
+    let activeShayari = 0;
+
+    function goToStep(stepNum) {
+      currentStep = stepNum;
+      const container = document.getElementById('step-container');
+      
+      if (stepNum === 2) {
+        // Render Shayari Page
+        container.innerHTML = `
+          <div class="glass-card" style="padding: 2.5rem 2rem; max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+              <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 700;">Step 2 of 6: Shayari</span>
+              <span>📖</span>
+            </div>
+            <h3 class="text-gradient" style="font-size: 1.8rem; margin-bottom: 1.5rem;">Dosti Ki Pyaari Shayari ✨</h3>
+            <div style="min-height: 180px; display: flex; flex-direction: column; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <p id="shayari-hindi" style="font-family: var(--font-serif); font-size: 1.35rem; line-height: 1.7; font-style: italic; white-space: pre-line; color: #fff; margin-bottom: 1rem;"></p>
+              <p id="shayari-trans" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.8rem;"></p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 6px;" id="shayari-dots"></div>
+              <button class="btn btn-yes" onclick="nextShayari()" style="padding: 0.7rem 1.8rem;">Agli Shayari ➔</button>
+            </div>
+          </div>
+        `;
+        renderShayari();
+      } else if (stepNum === 3) {
+        // Render Jaipur / vibe check page
+        container.innerHTML = `
+          <div class="glass-card" style="padding: 2.5rem 2rem; max-width: 600px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+              <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 700;">Step 3 of 6: Jaipur Diaries</span>
+              <span>✈️</span>
+            </div>
+            <h3 class="text-gradient" style="font-size: 1.8rem; margin-bottom: 1rem; text-align: center;">Jaipur Diaries & Vibe Check 🏰</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; text-align: center; margin-bottom: 2rem;">A quick checklist of our best memories and future plans in the Pink City!</p>
+            
+            <div style="margin-bottom: 2rem;">
+              <h4 style="color: var(--secondary); font-size: 1.1rem; margin-bottom: 1rem; font-family: var(--font-serif);">✅ Our Vibe Check (Tick the ones you agree with)</h4>
+              <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <label style="display: flex; align-items: center; gap: 12px; font-size: 1.05rem; cursor: pointer; color: var(--text-secondary);">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary);" onchange="toggleMemory(this)"> Late night gossips & deep talks 💬
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; font-size: 1.05rem; cursor: pointer; color: var(--text-secondary);">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary);" onchange="toggleMemory(this)"> Stupid arguments over small things 🤪
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; font-size: 1.05rem; cursor: pointer; color: var(--text-secondary);">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary);" onchange="toggleMemory(this)"> Sharing screenshots and secrets 🤫
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; font-size: 1.05rem; cursor: pointer; color: var(--text-secondary);">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary);" onchange="toggleMemory(this)"> Teasing each other till we get angry 😈
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 2.5rem;">
+              <h4 style="color: #ec4899; font-size: 1.1rem; margin-bottom: 1rem; font-family: var(--font-serif);">📍 Upcoming Jaipur Roadtrip Wishlist</h4>
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 1rem;">
+                  <span style="font-size: 2rem;">🏰</span>
+                  <div>
+                    <h5 style="color: #fff; font-weight: 700; margin: 0;">Hawa Mahal</h5>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Chaa ki chuski near the palace ☕</p>
+                  </div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 1rem;">
+                  <span style="font-size: 2rem;">🌊</span>
+                  <div>
+                    <h5 style="color: #fff; font-weight: 700; margin: 0;">Jal Mahal</h5>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Cool evening walks & endless talks 🌅</p>
+                  </div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 1rem;">
+                  <span style="font-size: 2rem;">⛰️</span>
+                  <div>
+                    <h5 style="color: #fff; font-weight: 700; margin: 0;">Nahargarh Sunset</h5>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Watching the golden hour of pink city 🌇</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn btn-yes" onclick="goToStep(4)" style="padding: 0.7rem 1.8rem;">Read Wicky's Letter ➔</button>
+            </div>
+          </div>
+        `;
+      } else if (stepNum === 4) {
+        // Render Letter Page
+        container.innerHTML = `
+          <div class="glass-card" style="padding: 2.5rem 2rem; max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+              <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 700;">Step 4 of 6: Handwritten Letter</span>
+              <span>📬</span>
+            </div>
+            <h3 class="text-gradient" style="font-size: 1.8rem; margin-bottom: 1.5rem;">A Letter From Wicky 📝</h3>
+            <div class="letter-paper" id="letter-content" style="margin-bottom: 2rem; min-height: 350px;"></div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn btn-yes" onclick="goToStep(5)" style="padding: 0.7rem 1.8rem;">See Promises ➔</button>
+            </div>
+          </div>
+        `;
+        startTypewriter();
+      } else if (stepNum === 5) {
+        // Render Promise Wall
+        container.innerHTML = `
+          <div class="glass-card" style="padding: 2.5rem 2rem; max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+              <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 700;">Step 5 of 6: Promise Wall</span>
+              <span>🤝</span>
+            </div>
+            <h3 class="text-gradient" style="font-size: 1.8rem; margin-bottom: 1rem;">Wicky's Promise Wall 💖</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2.5rem;">Click to lock these promises! I will keep them forever as a token of our friendship.</p>
+            
+            <div class="promise-grid" style="margin-bottom: 2.5rem;">
+              <button class="promise-tag" onclick="togglePromise(this)">Humesha reply time par karna 📱</button>
+              <button class="promise-tag" onclick="togglePromise(this)">Ladaai hone par pehle sorry bolna 🥺</button>
+              <button class="promise-tag" onclick="togglePromise(this)">Tumhari gossip chup-chap sunna 🤫</button>
+              <button class="promise-tag" onclick="togglePromise(this)">Jaipur me Hawa Mahal ke paas treat dena 🏰☕</button>
+              <button class="promise-tag" onclick="togglePromise(this)">Faltu jokes par bhi zabardasti hasna 😂</button>
+              <button class="promise-tag" onclick="togglePromise(this)">Har situation me best friend bankar rehna 🤝</button>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn btn-yes" onclick="goToStep(6)" style="padding: 0.7rem 1.8rem;">Finish Journey ➔</button>
+            </div>
+          </div>
+        `;
+      } else if (stepNum === 6) {
+        // Render Thank You / Celebration page
+        container.innerHTML = `
+          <div class="glass-card" style="padding: 3.5rem 2rem; max-width: 600px; cursor: pointer;" onclick="spawnClickHeart(event)">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+              <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 700;">Step 6 of 6: Celebration</span>
+              <span>🎉</span>
+            </div>
+            <div style="font-size: 5rem; margin-bottom: 1.5rem; animation: wobble 2s infinite;">🏆💝</div>
+            <h2 class="text-gradient" style="font-size: 2.8rem; margin-bottom: 1.5rem; font-weight: 800;">Thank You, Bestie!</h2>
+            <p style="color: var(--text-secondary); font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+              Maaf karne ke liye aur meri baaton ko samajhne ke liye bahut bahut thank you. 
+              <br />
+              <strong style="color: var(--secondary);">You are the best friend ever!</strong>
+            </p>
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.2rem; display: inline-block; margin-bottom: 1rem;">
+              <p style="font-style: italic; font-size: 0.95rem; color: var(--text-muted); margin: 0;">
+                "Dosti me no sorry, no thank you bolte hain... Par jab dil se sorry aur thank you nikle, toh dosti aur gehri ho jaati hai." ✨
+              </p>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2rem;">Tap anywhere on the screen to shower more hearts! 💖</p>
+          </div>
+        `;
+        startHeartShower();
+      }
+    }
+
+    // ----------------------------------------------------
+    // Dodging "No" Button Logic (Unlimited Spawning up to 50)
+    // ----------------------------------------------------
+    function getRandCoord() {
+      const padding = 60;
+      const maxX = window.innerWidth - 160;
+      const maxY = window.innerHeight - 60;
+      return {
+        x: Math.max(padding, Math.floor(Math.random() * maxX)),
+        y: Math.max(padding, Math.floor(Math.random() * maxY))
+      };
+    }
+
+    function moveNoBtn() {
+      const parent = document.getElementById('btn-container');
+      if (!parent) return;
+
+      // Move the first button if it's inline
+      const primaryNo = document.getElementById('no-btn');
+      const coords = getRandCoord();
+      primaryNo.style.position = 'fixed';
+      primaryNo.style.left = coords.x + 'px';
+      primaryNo.style.top = coords.y + 'px';
+      primaryNo.style.zIndex = '9999';
+      primaryNo.style.transition = 'all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.2)';
+      primaryNo.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+
+      // Spawn extra buttons if total is less than 50
+      if (noButtons.length < 50) {
+        const spawnCoords = getRandCoord();
+        const nextId = 'no-btn-' + Date.now() + Math.floor(Math.random() * 1000);
+        noButtons.push({ id: nextId });
+
+        const newBtn = document.createElement('button');
+        newBtn.id = nextId;
+        newBtn.className = 'btn btn-no';
+        newBtn.style.position = 'fixed';
+        newBtn.style.left = spawnCoords.x + 'px';
+        newBtn.style.top = spawnCoords.y + 'px';
+        newBtn.style.zIndex = '9999';
+        newBtn.style.transition = 'all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.2)';
+        newBtn.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+
+        // Hook handlers
+        newBtn.onmouseenter = () => moveSpecificBtn(nextId);
+        newBtn.ontouchstart = (e) => { e.preventDefault(); moveSpecificBtn(nextId); };
+        newBtn.onfocus = () => moveSpecificBtn(nextId);
+        newBtn.onclick = (e) => { e.preventDefault(); moveSpecificBtn(nextId); };
+
+        document.body.appendChild(newBtn);
+      }
+    }
+
+    function moveSpecificBtn(btnId) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      const coords = getRandCoord();
+      btn.style.left = coords.x + 'px';
+      btn.style.top = coords.y + 'px';
+      btn.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+
+      // Spawn another if < 50
+      if (noButtons.length < 50) {
+        const spawnCoords = getRandCoord();
+        const nextId = 'no-btn-' + Date.now() + Math.floor(Math.random() * 1000);
+        noButtons.push({ id: nextId });
+
+        const newBtn = document.createElement('button');
+        newBtn.id = nextId;
+        newBtn.className = 'btn btn-no';
+        newBtn.style.position = 'fixed';
+        newBtn.style.left = spawnCoords.x + 'px';
+        newBtn.style.top = spawnCoords.y + 'px';
+        newBtn.style.zIndex = '9999';
+        newBtn.style.transition = 'all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.2)';
+        newBtn.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+
+        newBtn.onmouseenter = () => moveSpecificBtn(nextId);
+        newBtn.ontouchstart = (e) => { e.preventDefault(); moveSpecificBtn(nextId); };
+        newBtn.onfocus = () => moveSpecificBtn(nextId);
+        newBtn.onclick = (e) => { e.preventDefault(); moveSpecificBtn(nextId); };
+
+        document.body.appendChild(newBtn);
+      }
+    }
+
+    function handleTouchNo(e) {
+      e.preventDefault();
+      moveNoBtn();
+    }
+
+    function handleNoClick(e) {
+      e.preventDefault();
+      moveNoBtn();
+    }
+
+    // Cleanup spawned No buttons when changing step
+    const origGoToStep = goToStep;
+    goToStep = function(stepNum) {
+      // Delete any spawned No buttons from body
+      noButtons.forEach(btn => {
+        if (btn.id !== 1) {
+          const el = document.getElementById(btn.id);
+          if (el) el.remove();
+        }
+      });
+      // Also delete primary if moving ahead
+      const primaryNo = document.getElementById('no-btn');
+      if (primaryNo) primaryNo.remove();
+
+      origGoToStep(stepNum);
+    };
+
+    // ----------------------------------------------------
+    // Page 2: Shayari Rendering
+    // ----------------------------------------------------
+    function renderShayari() {
+      document.getElementById('shayari-hindi').innerText = shayaris[activeShayari].hindi;
+      document.getElementById('shayari-trans').innerText = `"${shayaris[activeShayari].trans}"`;
+      
+      const dotsContainer = document.getElementById('shayari-dots');
+      dotsContainer.innerHTML = '';
+      shayaris.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.style.width = '8px';
+        dot.style.height = '8px';
+        dot.style.borderRadius = '50%';
+        dot.style.backgroundColor = idx === activeShayari ? 'var(--primary)' : 'rgba(255, 255, 255, 0.3)';
+        dot.style.transition = 'all 0.3s ease';
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function nextShayari() {
+      if (activeShayari < shayaris.length - 1) {
+        activeShayari++;
+        renderShayari();
+      } else {
+        goToStep(3);
+      }
+    }
+
+    // ----------------------------------------------------
+    // Page 3: Vibe Check Checklist
+    // ----------------------------------------------------
+    function toggleMemory(checkbox) {
+      const label = checkbox.parentElement;
+      if (checkbox.checked) {
+        label.style.color = '#f472b6';
+        label.style.textDecoration = 'line-through';
+      } else {
+        label.style.color = 'var(--text-secondary)';
+        label.style.textDecoration = 'none';
+      }
+    }
+
+    // ----------------------------------------------------
+    // Page 4: Typewriter Letter
+    // ----------------------------------------------------
+    const letterText = `Pyaari Best Friend,
+
+Sabse pehle, I am really really sorry. Mera wo matlab bilkul nahi tha jo maine kaha, aur mujhe sach me bahut bura laga ki meri baaton se tum hurt hui. 🥺
+
+Humari dosti mere liye sabse pyaari hai. Tumse ladna, tumko pareshaan karna aur fir saath me hansna—ye sab meri life ka best part hai. Jaipur ki palaces ghumne ka humara plan ho ya roz ki faltu baatein, tumhare bina sab boring hai!
+
+Tumse achha aur samajhdaar dost mujhe kabhi nahi mil sakta. Main promise karta hoon ki aage se aisi koi baat nahi bolunga jisse tumhein dukh pahuche. 
+
+Please mujhe maaf kar do aur wapas se pehle jaise bestie ban jao! ❤️
+
+Always your best friend,
+Wicky`;
+
+    function startTypewriter() {
+      const container = document.getElementById('letter-content');
+      let idx = 0;
+      container.innerHTML = '';
+
+      const cursor = document.createElement('span');
+      cursor.style.display = 'inline-block';
+      cursor.style.width = '2px';
+      cursor.style.height = '1.2em';
+      cursor.style.backgroundColor = '#2c2518';
+      cursor.style.marginLeft = '2px';
+      cursor.style.animation = 'blink-cursor 0.7s infinite alternate';
+
+      const textNode = document.createTextNode('');
+      container.appendChild(textNode);
+      container.appendChild(cursor);
+
+      // Inject style if not already
+      if (!document.getElementById('typewriter-blink-style')) {
+        const style = document.createElement('style');
+        style.id = 'typewriter-blink-style';
+        style.innerHTML = `@keyframes blink-cursor { 0% { opacity: 0; } 100% { opacity: 1; } }`;
+        document.head.appendChild(style);
+      }
+
+      function type() {
+        if (idx < letterText.length) {
+          textNode.textContent += letterText[idx];
+          idx++;
+          setTimeout(type, 30);
+        } else {
+          cursor.remove();
+        }
+      }
+      type();
+    }
+
+    // ----------------------------------------------------
+    // Page 5: Promise Tags
+    // ----------------------------------------------------
+    function togglePromise(btn) {
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        btn.innerHTML = '🔒 ' + btn.innerHTML;
+      } else {
+        btn.innerHTML = btn.innerHTML.replace('🔒 ', '');
+      }
+    }
+
+    // ----------------------------------------------------
+    // Page 6: Confetti / Click Heart Shower
+    // ----------------------------------------------------
+    let showerInterval = null;
+
+    function startHeartShower() {
+      showerInterval = setInterval(() => {
+        createHeart(Math.random() * window.innerWidth, window.innerHeight + 50);
+      }, 150);
+    }
+
+    function spawnClickHeart(e) {
+      createHeart(e.clientX, e.clientY);
+    }
+
+    function createHeart(x, y) {
+      const heart = document.createElement('div');
+      heart.className = 'floating-particle';
+      const items = ["❤️", "💖", "✨", "🌸", "💕"];
+      heart.innerText = items[Math.floor(Math.random() * items.length)];
+      heart.style.left = x + 'px';
+      heart.style.top = y + 'px';
+
+      const size = 15 + Math.random() * 25;
+      heart.style.fontSize = size + 'px';
+
+      const duration = 2.5 + Math.random() * 2.5;
+      heart.style.animationDuration = duration + 's';
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, duration * 1000);
+    }
+
+    // Cleanup shower interval if we leave
+    window.addEventListener('beforeunload', () => {
+      if (showerInterval) clearInterval(showerInterval);
+    });
+
+    // ----------------------------------------------------
+    // Web Audio Ambient Music Synthesizer
+    // ----------------------------------------------------
+    let audioCtx = null;
+    let isPlaying = false;
+    let schedulerTimer = null;
+    const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00];
+
+    const playerBtn = document.getElementById('music-player-btn');
+    const musicText = document.getElementById('music-text');
+    const indicator = document.getElementById('sound-indicator-container');
+
+    playerBtn.onclick = async () => {
+      if (!isPlaying) {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+        isPlaying = true;
+        musicText.innerText = "Ambient Sound Playing";
+        indicator.innerHTML = `
+          <div class="sound-indicator">
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+          </div>
+        `;
+        startScheduler();
+      } else {
+        isPlaying = false;
+        musicText.innerText = "Tap for Soft Music 🎵";
+        indicator.innerHTML = `
+          <div style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">🔇</div>
+        `;
+        if (schedulerTimer) clearTimeout(schedulerTimer);
+        if (audioCtx) audioCtx.suspend();
+      }
+    };
+
+    function playNote() {
+      if (!audioCtx || audioCtx.state === 'suspended') return;
+      const now = audioCtx.currentTime;
+      const freq = notes[Math.floor(Math.random() * notes.length)];
+
+      const osc = audioCtx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now);
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, now);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.04, now + 1.5);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 6);
+
+      const delay = audioCtx.createDelay();
+      delay.delayTime.value = 0.6;
+
+      const feedback = audioCtx.createGain();
+      feedback.gain.value = 0.4;
+
+      delay.connect(feedback);
+      feedback.connect(delay);
+
+      osc.connect(filter);
+      filter.connect(gain);
+
+      gain.connect(audioCtx.destination);
+      gain.connect(delay);
+      delay.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 6);
+    }
+
+    function startScheduler() {
+      playNote();
+      function next() {
+        const t = 2500 + Math.random() * 2000;
+        schedulerTimer = setTimeout(() => {
+          playNote();
+          next();
+        }, t);
+      }
+      next();
+    }
+  </script>
+</body>
+</html>
